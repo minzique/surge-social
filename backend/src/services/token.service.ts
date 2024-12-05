@@ -36,7 +36,7 @@ export class TokenService {
     return jwt.verify(token, secret);
   }
 
-  generateAuthTokens(user: IUserDocument) {
+  generateAuthTokens(user: IUserDocument): { accessToken: string; refreshToken: string } {
     const accessToken = this.generateAccessToken(user);
     const refreshToken = this.generateRefreshToken(user);
 

@@ -1,70 +1,67 @@
 import { Request, Response } from "express";
-import {
-  RegisterUserDto,
-  LoginUserDto,
-  UserResponseDto,
-} from "../dtos/auth.dto";
 import { User } from "@models/User";
 import { UserService } from "@services/user.service";
 import { TokenService } from "@services/token.service";
+import { 
+  RegisterRequest, 
+  LoginRequest, 
+  RegisterResponse,
+  LoginResponse
+} from "@/types/shared/api.types";
+import { BaseController } from "./base.controller";
+import { UserResponseDto } from "@/dtos/user.dto";
 
 const userService = new UserService();
 const tokenService = new TokenService();
 
-export class AuthController {
+export class AuthController extends BaseController {
   async register(req: Request, res: Response): Promise<void> {
     try {
-      const dto = req.body as RegisterUserDto;
+      const dto = req.body as RegisterRequest;
       const existingUser = await User.findOne({
         $or: [{ email: dto.email }, { username: dto.username }],
       });
-
       if (existingUser) {
-        res.status(400).json({ message: "User already exists" });
+        this.error(res, "User already exists", 400);
         return;
       }
 
-      // const hashedPassword = await bcrypt.hash(dto.password, 12);
       const user = await userService.create({
         email: dto.email,
         username: dto.username,
-        password: dto.password, // this is already hashed
+        password: dto.password,
       });
 
       const token = await tokenService.generateAuthTokens(user);
-      const responseDto = UserResponseDto.fromDocument(user);
-
-      res.status(201).json({ user: responseDto, token });
+      const responseData: RegisterResponse = {
+        user: UserResponseDto.fromDocument(user),
+        tokens: token
+      };
+      this.success(res, responseData);     
     } catch (error) {
-      console.error("Register error:", error);
-      res.status(500).json({ message: "Server error" });
+      console.error("Reg error:", error);
+      this.error(res, "Internal Server error", 500);
     }
   }
 
   async login(req: Request, res: Response): Promise<void> {
     try {
-      const dto = req.body as LoginUserDto;
-      const user = await User.findOne({ email: dto.email }).select("+password");
-
+      const dto = req.body as LoginRequest
+      const user = await userService.verifyCredentials(dto.email, dto.password);
       if (!user) {
-        res.status(401).json({ message: "Invalid credentials" });
+        this.error(res, "Invalid credentials", 401);
         return;
       }
 
-      const isPasswordValid = await user.comparePassword(dto.password);
-
-      if (!isPasswordValid) {
-        res.status(401).json({ message: "Invalid credentials" });
-        return;
-      }
-
-      const token = await user.generateAuthToken();
-      const responseDto = UserResponseDto.fromDocument(user);
-
-      res.status(200).json({ user: responseDto, token });
+      const token = await tokenService.generateAuthTokens(user);
+      const responseData: LoginResponse = {
+        user: UserResponseDto.fromDocument(user),
+        tokens: token
+      };
+      this.success(res, responseData);
     } catch (error) {
       console.error("Login error:", error);
-      res.status(500).json({ message: "Server error" });
+      this.error(res, "Internal Server error", 500);
     }
   }
 }
