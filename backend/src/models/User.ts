@@ -1,13 +1,12 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { EntityId } from "@/types/shared.types";
 
 // Base interface (without Document methods)
 export interface IUser {
   email: string;
   password?: string;
-  username?: string;
+  username: string;
   isEmailVerified: boolean;
   emailVerificationToken?: string;
   emailVerificationExpires?: Date;

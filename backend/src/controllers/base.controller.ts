@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { ApiResponse } from "../types/shared/api.types";
 
 const sendResponse = <T>(

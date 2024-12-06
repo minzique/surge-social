@@ -2,11 +2,12 @@ import express from "express";
 import mongoose from "mongoose";
 import passport from "passport";
 import cors from "cors";
-import dotenv from "dotenv";
-import authRoutes from "./routes/auth.routes";
+import authRoutes from "@routes/auth.routes";
+// import postRoutes from "@routes/post.routes";
+import { config, validateConfig } from "./config/env.config";
 import postRoutes from "./routes/post.routes";
 
-dotenv.config();
+validateConfig();
 
 const app = express();
 
@@ -17,7 +18,7 @@ app.use(passport.initialize());
 
 // Database connection
 mongoose
-  .connect(process.env.MONGODB_URI!)
+  .connect(config.mongodb.uri)
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
@@ -25,7 +26,10 @@ mongoose
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Start server
+app.listen(config.server.port, () => {
+  console.log(`Server running on port ${config.server.port}`);
+  console.log(`Environment: ${config.server.nodeEnv}`);
 });
+
+export { app };

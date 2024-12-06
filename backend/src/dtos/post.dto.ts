@@ -1,8 +1,9 @@
 import { IsString, IsOptional, MaxLength } from "class-validator";
 import { IPostDocument } from "@models/Post";
 import { IUserDocument } from "@models/User";
-import { EntityId } from "@/types/shared.types";
+import { EntityId } from "@/types/common.types";
 // Request DTOs
+
 export class CreatePostDto {
   @IsString()
   @MaxLength(1000)

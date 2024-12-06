@@ -1,3 +1,5 @@
+import { PostResponseDto } from "@/dtos/post.dto";
+
 export interface Post {
   id: string;
   content: string;
@@ -20,9 +22,7 @@ export interface UpdatePostRequest {
   content: string;
 }
 
-export interface PostResponse {
-  post: Post;
-}
+export type PostResponse = PostResponseDto;
 
 export interface PostsResponse {
   posts: Post[];
@@ -34,6 +34,7 @@ export type SortBy = 'createdAt' | 'likes';
 export type SortOrder = 'asc' | 'desc';
 
 export interface PostQueryParams {
+  userId?: string;
   page?: number;
   limit?: number;
   sortBy?: SortBy;
