@@ -1,18 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import ReCaptchaV3 from "../lib/recaptcha";
+import { AuthCard } from "./ui/auth-card";
 
 const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
@@ -31,7 +23,6 @@ export default function Login() {
   const location = useLocation();
   const { login, isAuthenticated } = useAuth();
 
-  // Redirect if already logged in
   useEffect(() => {
     if (isAuthenticated) {
       const from = location.state?.from?.pathname || "/";
@@ -40,7 +31,6 @@ export default function Login() {
   }, [isAuthenticated, navigate, location]);
 
   useEffect(() => {
-    // Initialize ReCAPTCHA when component mounts
     const recaptcha = ReCaptchaV3.getInstance(RECAPTCHA_SITE_KEY);
     recaptcha.loadScript().catch((error) => {
       console.error("Failed to load ReCAPTCHA:", error);
@@ -78,7 +68,6 @@ export default function Login() {
     setIsLoading(true);
     try {
       await login(email, password);
-      // Successful login will trigger the useEffect above to handle navigation
     } catch (err) {
       console.error("Login error:", err);
       setLoginError(
@@ -91,81 +80,41 @@ export default function Login() {
     }
   };
 
+  const fields = [
+    {
+      name: "email",
+      type: "text",
+      value: email,
+      placeholder: "Email",
+      onChange: (value: string) => {
+        setEmail(value);
+        setErrors((prev) => ({ ...prev, email: undefined }));
+      },
+      error: errors.email,
+    },
+    {
+      name: "password",
+      type: "password",
+      value: password,
+      placeholder: "Password",
+      onChange: (value: string) => {
+        setPassword(value);
+        setErrors((prev) => ({ ...prev, password: undefined }));
+      },
+      error: errors.password,
+    },
+  ];
+
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold text-center">
-          Login to Surge Social
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {loginError && (
-            <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md text-center">
-              {loginError}
-            </div>
-          )}
-          <div className="space-y-2">
-            <Input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setErrors((prev) => ({ ...prev, email: undefined }));
-              }}
-              className={errors.email ? "border-red-500" : ""}
-              disabled={isLoading}
-              aria-invalid={!!errors.email}
-              aria-describedby={errors.email ? "email-error" : undefined}
-            />
-            {errors.email && (
-              <p className="text-sm text-red-500" id="email-error">
-                {errors.email}
-              </p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                setErrors((prev) => ({ ...prev, password: undefined }));
-              }}
-              className={errors.password ? "border-red-500" : ""}
-              disabled={isLoading}
-              aria-invalid={!!errors.password}
-              aria-describedby={errors.password ? "password-error" : undefined}
-            />
-            {errors.password && (
-              <p className="text-sm text-red-500" id="password-error">
-                {errors.password}
-              </p>
-            )}
-          </div>
-          <Button 
-            type="submit" 
-            className="w-full"
-            disabled={isLoading}
-          >
-            {isLoading ? "Logging in..." : "Login"}
-          </Button>
-        </form>
-      </CardContent>
-      <CardFooter className="justify-center">
-        <p className="text-sm text-gray-600">
-          Don't have an account?{" "}
-          <Link 
-            to="/register" 
-            className="text-blue-600 hover:underline"
-            tabIndex={0}
-          >
-            Register here
-          </Link>
-        </p>
-      </CardFooter>
-    </Card>
+    <AuthCard
+      isLoading={isLoading}
+      error={loginError}
+      onSubmit={handleSubmit}
+      fields={fields}
+      submitText="Log in"
+      alternateText="Don't have an account?"
+      alternateLinkText="Sign up"
+      alternateLinkTo="/register"
+    />
   );
 }
