@@ -1,47 +1,54 @@
-"use client";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "@/hooks/useAuth";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import Login from "@/components/Login";
+import Register from "@/components/Register";
+import Timeline from "@/components/Timeline";
+import Profile from "@/components/Profile";
 
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
-import { useState } from "react";
-import Navbar from "./components/NavBar";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import Timeline from "./components/Timeline";
-import Profile from "./components/Profile";
-
-export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-  };
-
+function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-100">
-        {isAuthenticated && <Navbar />}
-        <main className="container mx-auto px-4 py-8">
+    <AuthProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-100">
           <Routes>
-            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            {/* Public routes */}
+            <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+
+            {/* Protected routes */}
             <Route
               path="/timeline"
               element={
-                isAuthenticated ? <Timeline /> : <Navigate to="/login" />
+                <ProtectedRoute>
+                  <Timeline />
+                </ProtectedRoute>
               }
             />
             <Route
-              path="/profile/:userId"
-              element={isAuthenticated ? <Profile /> : <Navigate to="/login" />}
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
             />
-            <Route path="/" element={<Navigate to="/login" />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Timeline />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Catch all route */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </main>
-      </div>
-    </Router>
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
+
+export default App;
