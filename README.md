@@ -24,7 +24,6 @@ A full-stack instagram-like application
 
 ### Infrastructure & Deployment
 - [x] MongoDB database integration
-- [x] Full-stack solution (frontend + backend)
 - [x] Docker configuration
 - [x] Multi-container setup with docker-compose
 - [x] Basic unit tests implementation
@@ -68,8 +67,7 @@ The Docker setup includes:
 
 ### Backend (Node.js + TypeScript)
 - Express.js for REST API
-- MongoDB with Mongoose ODM
-- Controller-Service-Model architecture
+- MongoDB with Mongoose
 - Middleware implementation for:
   - Authentication
   - Validation
@@ -82,7 +80,6 @@ The Docker setup includes:
 - React Router for navigation
 - Custom hooks and components
 - Shared types with backend
-- Environment variable management
 
 ### Environment Variables
 All environment variables are managed in a single `.env` file:
