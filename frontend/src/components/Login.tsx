@@ -1,32 +1,48 @@
 "use client";
 
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "./ui/card";
+import { useAuth } from "../hooks/useAuth";
+import ReCaptchaV3 from "../lib/recaptcha";
 
-interface LoginProps {
-  onLogin: () => void;
-}
+const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
-export default function Login({ onLogin }: LoginProps) {
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
+
+  useEffect(() => {
+    // Initialize ReCAPTCHA when component mounts
+    const recaptcha = ReCaptchaV3.getInstance(RECAPTCHA_SITE_KEY);
+    recaptcha.loadScript().catch((error) => {
+      console.error("Failed to load ReCAPTCHA:", error);
+      setError("Failed to initialize security check");
+    });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement actual login logic here
-    console.log("Login attempt with:", { email, password });
-    onLogin();
-    navigate("/timeline");
+    setError("");
+
+    try {
+      await login(email, password);
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+      setError(err instanceof Error ? err.message : "Login failed");
+    }
   };
 
   return (
@@ -38,6 +54,9 @@ export default function Login({ onLogin }: LoginProps) {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="text-red-500 text-sm text-center">{error}</div>
+          )}
           <div>
             <Input
               type="email"

@@ -1,29 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "./ui/card";
+import { useAuth } from "../hooks/useAuth";
+import ReCaptchaV3 from "../lib/recaptcha";
+
+const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
 export default function Register() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { register } = useAuth();
+
+  useEffect(() => {
+    // Initialize ReCAPTCHA when component mounts
+    const recaptcha = ReCaptchaV3.getInstance(RECAPTCHA_SITE_KEY);
+    recaptcha.loadScript().catch((error) => {
+      console.error("Failed to load ReCAPTCHA:", error);
+      setError("Failed to initialize security check");
+    });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement actual registration logic here
-    console.log("Registration attempt with:", { email, username, password });
-    navigate("/login");
+    setError("");
+    
+    try {
+      await register(email, username, password);
+      navigate("/");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Registration failed");
+    }
   };
 
   return (
@@ -35,6 +55,9 @@ export default function Register() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="text-red-500 text-sm text-center">{error}</div>
+          )}
           <div>
             <Input
               type="email"
