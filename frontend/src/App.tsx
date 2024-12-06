@@ -1,16 +1,16 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "@/hooks/useAuth";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import Login from "@/components/Login";
-import Register from "@/components/Register";
-import Timeline from "@/components/Timeline";
-import Profile from "@/components/Profile";
+import { AuthProvider } from "./hooks/useAuth";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Timeline from "./components/Timeline";
+import Profile from "./components/Profile";
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen bg-[#fafafa]">
           <Routes>
             {/* Public routes */}
             <Route path="/login" element={<Login />} />
