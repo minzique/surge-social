@@ -1,19 +1,27 @@
-# Stage 1: Build the frontend
-FROM node:22-alpine AS builder
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 COPY . .
 RUN npm run build
 
-# Serve with Nginx
-FROM nginx:alpine
+# Stage 2: Production
+FROM node:18-alpine
 
-# Copy build files from the first stage
-COPY --from=builder /app/dist /usr/share/nginx/html
+WORKDIR /app
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# Install serve
+RUN npm install -g serve
+
+# Copy built files
+COPY --from=builder /app/dist ./dist
+
+# Security: Create non-root user
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+EXPOSE 3000
+CMD ["serve", "-s", "dist", "-l", "3000"]
