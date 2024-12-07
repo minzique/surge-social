@@ -6,10 +6,13 @@ services:
       context: ./backend
       dockerfile: ../docker/backend.dockerfile
     ports:
-      - "${BACKEND_PORT}:5000"
+      - "${BACKEND_PORT:-5000}:5000"
+    env_file: 
+      - ./.env
     environment:
       - MONGODB_URI=${MONGODB_URI}
       - JWT_SECRET=${JWT_SECRET}
+      - PORT=${BACKEND_PORT}
     volumes:
       - ./backend:/app
       - /app/node_modules
@@ -23,15 +26,28 @@ services:
       context: ./frontend
       dockerfile: ../docker/frontend.dockerfile
     ports:
-      - "${FRONTEND_PORT}:3000"
+      - "${FRONTEND_PORT:-3000}:80" 
+    env_file: 
+      - ./frontend/.env
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./frontend:/app # Only mount for development purposes
     depends_on:
       - backend
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:5
+    environment:
+      MONGO_INITDB_DATABASE: surge-social
+    volumes:
+      - mongo_data:/data/db
     networks:
       - app-network
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  mongo_data:
