@@ -1,7 +1,8 @@
 import { Router, Router as ExpressRouter } from "express";
 import { PostController } from "@controllers/post.controller";
 import { authenticateUser } from "@middleware/auth.middleware";
-
+import { validateDto } from "@middleware/validation.middleware";
+import { CreatePostDto } from "@dtos/post.dto";
 
 const router: ExpressRouter = Router();
 const controller = new PostController();
@@ -10,15 +11,13 @@ const controller = new PostController();
 router.use(authenticateUser as any);
 
 // Create post
-// router.post("/", validateDto(CreatePostDto), controller.createPost(req, res));
+router.post("/create", validateDto(CreatePostDto), controller.createPost as any);
 
 // Get posts with pagination and filters
 // router.get("/", controller.getPosts);
 router.get("/user/:id", controller.getPostsOfUser);
-router.get("/:id", controller.getPostById as any);
-
-// TODO: implement this
-// Update post
+// router.get("/:id", controller.getPostById as any);
+router.get("/trending", controller.getRankedPosts as any);
 // router.patch(
 //   "/:id",
 //   validateDto(UpdatePostDto),
@@ -60,12 +59,10 @@ router.get("/:id", controller.getPostById as any);
 //   }
 // );
 
-// Delete post
 // router.delete("/:id", async (req: AuthenticatedRequest, res) => {
 
 // });
 
-// // Like/unlike post
 // router.post("/:id/like", (req: AuthenticatedRequest, res) =>
 //   controller.toggleLike(req, res)
 // );

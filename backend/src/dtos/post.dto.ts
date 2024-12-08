@@ -3,7 +3,6 @@ import { IPostDocument } from "@models/Post";
 import { IUserDocument } from "@models/User";
 import { EntityId } from "@/types/common.types";
 // Request DTOs
-
 export class CreatePostDto {
   @IsString()
   @MaxLength(1000)
@@ -51,7 +50,7 @@ export class PostResponseDto implements IPostResponse {
 
   static fromDocument(
     document: IPostDocument,
-    populatedUser?: IUserDocument
+    _populatedUser?: IUserDocument
   ): PostResponseDto {
     const dto = new PostResponseDto();
     dto.id = document._id as EntityId;
@@ -61,15 +60,15 @@ export class PostResponseDto implements IPostResponse {
     dto.createdAt = document.createdAt;
 
     // Handle populated user data if available
-    if (populatedUser && typeof document.user === "object") {
+    if (document.user && typeof document.user === "object") {
       dto.user = {
-        id: populatedUser._id!.toString(),
-        username: populatedUser.username || "Unknown",
+        id: document.user._id.toString(),
+        username: document.user.username || "Unknown",
       };
     } else {
       // If user is not populated, just use the ID
       dto.user = {
-        id: document.user!.toString(),
+        id: 'Unknown',
         username: "Unknown",
       };
     }

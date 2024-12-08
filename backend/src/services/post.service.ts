@@ -1,5 +1,5 @@
 import { CreatePostDto, PostResponseDto } from "../dtos/post.dto";
-import { Post } from "@models/Post";
+import { Post, IPostDocument } from "@models/Post";
 import { EntityId } from "@/types/common.types";
 
 export class PostService {
@@ -9,7 +9,7 @@ export class PostService {
       user: userId,
     });
 
-    return PostResponseDto.fromDocument(post, post.user as any);
+    return PostResponseDto.fromDocument(post);
   }
 
   static async getPostsByUserId(userId: EntityId, page: number, limit: number) {
@@ -21,9 +21,7 @@ export class PostService {
     });
 
     return {
-      posts: posts.map((post) =>
-        PostResponseDto.fromDocument(post, post.user as any)
-      ),
+      posts: posts.map((post) => PostResponseDto.fromDocument(post)),
       total,
       hasMore: total > skip + posts.length,
     };
@@ -36,7 +34,7 @@ export class PostService {
       throw new Error("Post not found");
     }
 
-    return PostResponseDto.fromDocument(post, post.user as any);
+    return PostResponseDto.fromDocument(post);
   }
 
   static async getPostById(postId: EntityId) {
@@ -46,5 +44,17 @@ export class PostService {
     }
 
     return PostResponseDto.fromDocument(post);
+  }
+
+  static async fetchRankedPosts(page: number = 1, limit: number = 10) {
+    const skip = (page - 1) * limit;
+
+    const {posts, total} = await Post.getRankedPosts({ skip, limit });
+
+    return {
+      posts: posts.map((post: IPostDocument) => PostResponseDto.fromDocument(post)),
+      total,
+      hasMore: total > skip + posts.length,
+    };
   }
 }

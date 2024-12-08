@@ -13,6 +13,7 @@ export class PostController extends BaseController {
     this.createPost = this.createPost.bind(this);
     this.getPostById = this.getPostById.bind(this);
     this.getPostsOfUser = this.getPostsOfUser.bind(this);
+    this.getRankedPosts = this.getRankedPosts.bind(this);
   }
   async createPost(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
@@ -79,4 +80,16 @@ export class PostController extends BaseController {
   //     this.error(res, "Failed to toggle like", 500);
   //   }
   // }
+  async getRankedPosts(req: Request, res: Response): Promise<void> {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+
+      const response = await PostService.fetchRankedPosts(page, limit);
+      this.success(res, response);
+    } catch (error) {
+      console.error("Get trending posts error:", error);
+      this.error(res, "Failed to fetch trending posts", 500);
+    }
+  }
 }

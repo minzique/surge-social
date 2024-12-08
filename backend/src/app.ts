@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.routes";
 // import postRoutes from "@routes/post.routes";
 import { config, validateConfig } from "./config/env.config";
 import postRoutes from "./routes/post.routes";
+import { errorHandler } from './middleware/error-handler';
 
 validateConfig();
 
@@ -14,7 +15,7 @@ const app: Express = express();
 const corsOptions = {
   origin: config.server.nodeEnv === 'production' 
     ? config.server.clientUrl 
-    : ['http://localhost:3000', 'http://localhost:5174', 'http://localhost:5000'],
+    : ['http://localhost:3000', 'http://localhost:5174', 'http://localhost:5173'],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   allowedOrigin: true,
@@ -33,6 +34,9 @@ connectDBWithRetry();
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
+
+// Global error handler - must be after routes
+app.use(errorHandler as any);
 
 // Start server
 app.listen(config.server.port, () => {
