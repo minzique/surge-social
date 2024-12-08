@@ -4,11 +4,7 @@ import { EntityId } from "@/types/common.types";
 
 // Base interface (without Document methods)
 export interface IPost {
-  user: {
-    _id: EntityId;
-    username: string;
-    email?: string;
-  };
+  user: EntityId;
   content: string;
   imageUrl?: string;
   likes: EntityId[];
@@ -47,7 +43,7 @@ export interface IPostModel extends Model<IPostDocument> {
 const postSchema = new Schema<IPostDocument>(
   {
     user: {
-      type: Schema.Types.Mixed,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
@@ -154,7 +150,7 @@ postSchema.statics.getRankedPosts = async function (options: {
       { $sort: { score: -1 } }, // Sort by descending score
       { $skip: options.skip },
       { $limit: options.limit },
-            {
+      {
         $lookup: {
           from: "users", // The name of the users collection
           localField: "user",
@@ -169,7 +165,7 @@ postSchema.statics.getRankedPosts = async function (options: {
     ]),
     this.countDocuments(),
   ]);
-
+  
   return { posts, total };
 };
 // Export the model and return type

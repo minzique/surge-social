@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   backend:
+    restart: always
     build:
       context: ./backend
       dockerfile: ../docker/backend.dockerfile
@@ -17,7 +18,6 @@ services:
       - RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY}
       - NODE_ENV=${NODE_ENV}
     volumes:
-      - ./backend:/app
       - /app/node_modules
     depends_on:
       - mongodb
@@ -25,6 +25,7 @@ services:
       - app-network
 
   frontend:
+    restart: always
     build:
       context: ./frontend
       dockerfile: ../docker/frontend.dockerfile
@@ -32,14 +33,13 @@ services:
       - "${FRONTEND_PORT:-3000}:${FRONTEND_PORT:-3000}" 
     env_file: 
       - ./frontend/.env
-    volumes:
-      - ./frontend:/app # Only mount for development purposes
     depends_on:
       - backend
     networks:
       - app-network
 
   mongodb:
+    restart: always
     image: mongo:5
     environment:
       MONGO_INITDB_DATABASE: surge-social
@@ -50,6 +50,7 @@ services:
   
   # Add Nginx reverse proxy for SSL termination
   nginx:
+    restart: always
     image: nginx:alpine
     ports:
       - "80:80"
@@ -65,6 +66,7 @@ services:
   
   # Automatically renew SSL certificates
   certbot:
+    restart: always
     image: certbot/certbot
     container_name: certbot
     volumes:

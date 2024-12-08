@@ -63,7 +63,7 @@ export class PostResponseDto implements IPostResponse {
     if (document.user && typeof document.user === "object") {
       dto.user = {
         id: document.user._id.toString(),
-        username: document.user.username || "Unknown",
+        username: (document.user as unknown as IUserDocument).username || "Unknown",
       };
     } else {
       // If user is not populated, just use the ID
