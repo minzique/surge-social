@@ -64,10 +64,11 @@ export const configurePassport = () => {
       }
     )
   );
+  return passport;
 };
 
 // Auth middleware
-export const requireAuth = passport.authenticate("jwt", { session: false });
+export const passportAuth = configurePassport();
 
 // Helper to generate auth tokens
 export const generateAuthTokens = (user: IUserDocument) => {

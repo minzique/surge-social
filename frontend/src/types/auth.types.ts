@@ -1,11 +1,6 @@
-export interface User {
-  id: string;
-  email: string;
-  username: string;
-  createdAt: string;
-  updatedAt?: string;
-}
+import { IUserResponse } from "./shared/api.types";
 
+export type User = IUserResponse
 export interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;

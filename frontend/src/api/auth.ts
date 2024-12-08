@@ -3,7 +3,7 @@ import { LoginCredentials, RegisterCredentials } from "../types/auth.types";
 import { ApiResponse } from "../types/shared/api.types";
 import { User } from "../types/auth.types";
 import { AxiosError } from "axios";
-
+import { LoginResponse, RegisterResponse } from "../types/shared/api.types";
 interface ApiErrorResponse {
   error: {
     message: string;
@@ -11,19 +11,19 @@ interface ApiErrorResponse {
   };
 }
 
-export interface AuthResponse {
-  user: User;
-  token: string;
-}
+
 
 export const authApi = {
-  async login(credentials: LoginCredentials): Promise<ApiResponse<AuthResponse>> {
+  async login(credentials: LoginCredentials): Promise<ApiResponse<LoginResponse>> {
     try {
-      const response = await apiClient.post<ApiResponse<AuthResponse>>("/auth/login", credentials);
+      const response = await apiClient.post<ApiResponse<LoginResponse>>(
+        "/auth/login",
+        credentials
+      );
       
       // Store token if present in response data
-      if (response.data.success && response.data.data?.token) {
-        localStorage.setItem("token", response.data.data.token);
+      if (response.data.success && response.data.data?.tokens) {
+        this.setTokens(response.data.data.tokens);
       }
       
       return response.data;
@@ -37,13 +37,13 @@ export const authApi = {
     }
   },
 
-  async register(data: RegisterCredentials): Promise<ApiResponse<AuthResponse>> {
+  async register(data: RegisterCredentials): Promise<ApiResponse<RegisterResponse>> {
     try {
-      const response = await apiClient.post<ApiResponse<AuthResponse>>("/auth/register", data);
+      const response = await apiClient.post<ApiResponse<RegisterResponse>>("/auth/register", data);
       
       // Store token if present in response data
-      if (response.data.success && response.data.data?.token) {
-        localStorage.setItem("token", response.data.data.token);
+      if (response.data.success && response.data.data?.tokens) {
+        this.setTokens(response.data.data.tokens);
       }
       
       return response.data;
@@ -61,8 +61,7 @@ export const authApi = {
       await apiClient.post("/auth/logout");
     } finally {
       // Always clear local storage on logout attempt
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      this.clearTokens();
     }
   },
 
@@ -74,8 +73,7 @@ export const authApi = {
       const axiosError = error as AxiosError;
       if (axiosError.response?.status === 401) {
         // Clear storage if unauthorized
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+        this.clearTokens();
       }
       throw error;
     }
@@ -83,12 +81,24 @@ export const authApi = {
 
   // Helper method to check if user is logged in
   isAuthenticated(): boolean {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
     return !!token;
   },
 
   // Helper method to get stored token
-  getToken(): string | null {
-    return localStorage.getItem("token");
+  getAccessToken(): string | null {
+    return localStorage.getItem("accessToken");
+  },
+
+  clearTokens(): void {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+  },
+
+  setTokens(tokens: { accessToken: string; refreshToken?: string }): void {
+    localStorage.setItem("accessToken", tokens.accessToken);
+    if (tokens.refreshToken) {
+      localStorage.setItem("refreshToken", tokens.refreshToken);
+    }
   }
 };

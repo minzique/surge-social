@@ -12,7 +12,7 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     // Get token from localStorage
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -29,14 +29,14 @@ apiClient.interceptors.response.use(
     // Check if there's a token in the response header
     const authToken = response.headers.authorization;
     if (authToken) {
-      localStorage.setItem("token", authToken);
+      localStorage.setItem("accessToken", authToken);
     }
     return response;
   },
   (error: AxiosError) => {
     if (error.response?.status === 401) {
       // Clear token and redirect to login on unauthorized
-      localStorage.removeItem("token");
+      localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
       window.location.href = "/login";
     }

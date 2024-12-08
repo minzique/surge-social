@@ -27,8 +27,9 @@ export interface RegisterResponse extends LoginResponse {
 
 // User Types
 
-export interface GetProfileResponse extends IUserResponse{}
-
+export interface GetProfileResponse{
+  user: IUserResponse;
+}
 
 
 // Post Types

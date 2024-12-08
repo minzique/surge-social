@@ -7,11 +7,17 @@ import { PostResponse } from "@/types/shared/post.types";
 import { AuthenticatedRequest } from "@/types/auth.types";
 
 export class PostController extends BaseController {
-  // 
+  constructor() {
+    super();
+    // Bind methods to preserve context
+    this.createPost = this.createPost.bind(this);
+    this.getPostById = this.getPostById.bind(this);
+    this.getPostsOfUser = this.getPostsOfUser.bind(this);
+  }
   async createPost(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       const userId = req.user?.id;
-      //TODO: this wont work, need to fix. leaving as boilerplate 
+      //TODO: this wont work, need to fix. leaving as boilerplate
       const createPostDto = new CreatePostDto();
       Object.assign(createPostDto, req.body);
 

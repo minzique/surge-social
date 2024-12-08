@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import passport from "passport";
+import { passportAuth } from "@/config/passport.config";
 import { AuthenticatedRequest } from "@/types/auth.types";
 import { IUserDocument } from "@/models/User";
 
@@ -8,7 +8,7 @@ export const authenticateUser = (
   res: Response,
   next: NextFunction
 ) => {
-  passport.authenticate("jwt", { session: false }, (err: any, user: IUserDocument | undefined) => {
+  passportAuth.authenticate("jwt", { session: false }, (err: any, user: IUserDocument | undefined) => {
     if (err) {
       return res.status(500).json({
         success: false,

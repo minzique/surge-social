@@ -25,13 +25,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const response = await authApi.getCurrentUser();
           if (response.success && response.data) {
             setUser(response.data.user);
+            console.log('User session restored: ', response.data.user);
             localStorage.setItem('user', JSON.stringify(response.data.user));
           }
         }
       } catch {
         // Clear invalid session
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        authApi.clearTokens()
         setUser(null);
       } finally {
         setIsLoading(false);
