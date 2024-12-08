@@ -10,7 +10,7 @@ docker-compose down
 docker-compose run --rm certbot certonly \
   --webroot \
   --webroot-path /var/www/certbot \
-  --email hello@minzique.net \
+  --email your@email.com \
   --agree-tos \
   --no-eff-email \
   -d surgesocial.app \

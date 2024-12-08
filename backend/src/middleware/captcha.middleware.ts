@@ -1,5 +1,6 @@
 // captcha.middleware.ts
 import axios from "axios";
+import { debug } from "console";
 import { Request, Response, NextFunction, RequestHandler } from "express";
 
 interface ReCaptchaResponse {
@@ -22,7 +23,7 @@ export function validateCaptchaV3(
         null,
         {
           params: {
-            secret: process.env.RECAPTCHA_V3_SECRET_KEY,
+            secret: process.env.RECAPTCHA_SECRET_KEY,
             response: captchaToken,
           },
         }
@@ -31,6 +32,7 @@ export function validateCaptchaV3(
       const { success, score, action: responseAction } = response.data;
 
       if (!success || responseAction !== action || score < minScore) {
+        debug("Security check failed", { score, required: minScore });
         res.status(400).json({
           error: "Security check failed",
           details: { score, required: minScore },
