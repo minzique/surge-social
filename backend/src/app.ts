@@ -1,6 +1,5 @@
 import express, {Express} from "express";
-
-import mongoose from "mongoose";
+import  connectDBWithRetry from "./config/mongoose.config";
 import passport from "passport";
 import cors from "cors";
 import authRoutes from "./routes/auth.routes";
@@ -29,10 +28,7 @@ app.use(cors(corsOptions));
 app.use(passport.initialize());
 
 // Database connection
-mongoose
-  .connect(config.mongodb.uri)
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+connectDBWithRetry();
 
 // Routes
 app.use("/api/auth", authRoutes);

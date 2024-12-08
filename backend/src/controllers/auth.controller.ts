@@ -15,6 +15,12 @@ const userService = new UserService();
 const tokenService = new TokenService();
 
 export class AuthController extends BaseController {
+  constructor() {
+    super();
+    // Bind methods to preserve context
+    this.register = this.register.bind(this);
+    this.login = this.login.bind(this);
+  }
   async register(req: Request, res: Response): Promise<void> {
     try {
       const dto = req.body as RegisterRequest;
@@ -35,9 +41,9 @@ export class AuthController extends BaseController {
       const token = await tokenService.generateAuthTokens(user);
       const responseData: RegisterResponse = {
         user: UserResponseDto.fromDocument(user),
-        tokens: token
+        tokens: token,
       };
-      this.success(res, responseData);     
+      this.success(res, responseData);
     } catch (error) {
       console.error("Reg error:", error);
       this.error(res, "Internal Server error", 500);
@@ -46,7 +52,7 @@ export class AuthController extends BaseController {
 
   async login(req: Request, res: Response): Promise<void> {
     try {
-      const dto = req.body as LoginRequest
+      const dto = req.body as LoginRequest;
       const user = await userService.verifyCredentials(dto.email, dto.password);
       if (!user) {
         this.error(res, "Invalid credentials", 401);
@@ -56,7 +62,7 @@ export class AuthController extends BaseController {
       const token = await tokenService.generateAuthTokens(user);
       const responseData: LoginResponse = {
         user: UserResponseDto.fromDocument(user),
-        tokens: token
+        tokens: token,
       };
       this.success(res, responseData);
     } catch (error) {
