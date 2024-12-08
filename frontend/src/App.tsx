@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
+import { PageTitle } from "./components/PageTitle";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -10,6 +11,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
+        <PageTitle />
         <div className="min-h-screen bg-[#fafafa]">
           <Routes>
             {/* Public routes */}
