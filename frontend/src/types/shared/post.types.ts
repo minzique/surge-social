@@ -10,19 +10,7 @@ export interface IPostResponse {
   };
   createdAt: Date;
 }
-export interface Post {
-  id: string;
-  content: string;
-  authorId: string;
-  author: {
-    id: string;
-    username: string;
-  };
-  likes: number;
-  likedBy: string[];  // Array of user IDs
-  createdAt: string;
-  updatedAt: string;
-}
+export type Post = IPostResponse;
 
 export interface CreatePostRequest {
   content: string;
