@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="frontend/src/public/favicon.ico" alt="Surge Social" width="200"/>
+  <img src="frontend/public/favicon.ico" alt="Surge Social" width="75"/>
   <h1 >Surge Social</h1>
   <p>A full-stack social media application built with TypeScript, React, and Node.js</p>
 </div>
