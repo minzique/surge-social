@@ -70,4 +70,13 @@ export class AuthController extends BaseController {
       this.error(res, "Internal Server error", 500);
     }
   }
+  // async logout(req: Request, res: Response): Promise<void> {
+  //   try {
+
+
+
+  //   }} catch (error) {
+  //     console.error("Logout error:", error);
+  //     this.error(res, "Internal Server error", 500);
+  //   }
 }

@@ -8,13 +8,7 @@ import { AuthenticatedRequest } from "@/types/auth.types";
 const userService = new UserService();
 
 export class UserController extends BaseController {
-  constructor() {
-    super();
-    // Bind methods to preserve context
-    this.getProfileById = this.getProfileById.bind(this);
-    this.getUser = this.getUser.bind(this);
-  }
-  async getProfileById(req: Request, res: Response): Promise<void> {
+  getProfileById = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.query;
       const user = await userService.findById(id as string);
@@ -23,14 +17,14 @@ export class UserController extends BaseController {
         return;
       }
       const profile = UserResponseDto.fromDocument(user);
-      this.success<GetProfileResponse>(res, {user: profile});
+      this.success<GetProfileResponse>(res, { user: profile });
     } catch (error) {
       console.error("Get profile error:", error);
       this.error(res, "Server error", 500);
     }
-  }
+  };
 
-  async getUser(req: AuthenticatedRequest, res: Response): Promise<void> {
+  getUser = async(req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
       const user = await userService.findById(req.user?.id as string);
       if (!user) {
@@ -38,7 +32,7 @@ export class UserController extends BaseController {
         return;
       }
       const profile = UserResponseDto.fromDocument(user);
-      this.success<GetProfileResponse>(res, {user: profile});
+      this.success<GetProfileResponse>(res, { user: profile });
     } catch (error) {
       console.error("Get profile error:", error);
       this.error(res, "Server error", 500);

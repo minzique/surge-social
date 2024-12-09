@@ -7,15 +7,8 @@ import { PostResponse } from "@/types/shared/post.types";
 import { AuthenticatedRequest } from "@/types/auth.types";
 
 export class PostController extends BaseController {
-  constructor() {
-    super();
-    // Bind methods to preserve context
-    this.createPost = this.createPost.bind(this);
-    this.getPostById = this.getPostById.bind(this);
-    this.getPostsOfUser = this.getPostsOfUser.bind(this);
-    this.getRankedPosts = this.getRankedPosts.bind(this);
-  }
-  async createPost(req: AuthenticatedRequest, res: Response): Promise<void> {
+
+  createPost = async (req: AuthenticatedRequest,res: Response): Promise<void> => {
     try {
       const userId = req.user?.id;
       //TODO: this wont work, need to fix. leaving as boilerplate
@@ -35,9 +28,9 @@ export class PostController extends BaseController {
       console.error("Create post error:", error);
       this.error(res, "Failed to create post", 500);
     }
-  }
+  };
 
-  async getPostById(req: AuthenticatedRequest, res: Response): Promise<void> {
+  getPostById = async ( req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
 
@@ -47,8 +40,8 @@ export class PostController extends BaseController {
       console.error("Get post error:", error);
       this.error(res, "Failed to fetch post", 500);
     }
-  }
-  async getPostsOfUser(req: Request, res: Response): Promise<void> {
+  };
+  getPostsOfUser = async (req: Request, res: Response): Promise<void> => {
     try {
       const { page = 1, limit = 10, userId } = req.query;
 
@@ -63,24 +56,24 @@ export class PostController extends BaseController {
       console.error("Get posts error:", error);
       this.error(res, "Failed to fetch posts", 500);
     }
+  };
+
+  toggleLike = async(req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const userId = req.user?.id;
+      const postId = req.params.id;
+      const response = await PostService.toggleLike(postId, userId);
+      this.success(res, response);
+    } catch (error) {
+      if (error.message === "Post not found") {
+        this.error(res, "Post not found", 404);
+        return;
+      }
+      console.error("Toggle like error:", error);
+      this.error(res, "Failed to toggle like", 500);
+    }
   }
-
-  // async toggleLike(req: Request, res: Response): Promise<void> {
-  //   try {
-  //     // TODO
-
-  //     const response = await PostService.toggleLike(postId, userId);
-  //     this.success(res, response);
-  //   } catch (error) {
-  //     if (error.message === "Post not found") {
-  //       this.error(res, "Post not found", 404);
-  //       return;
-  //     }
-  //     console.error("Toggle like error:", error);
-  //     this.error(res, "Failed to toggle like", 500);
-  //   }
-  // }
-  async getRankedPosts(req: Request, res: Response): Promise<void> {
+  getRankedPosts = async (req: Request, res: Response): Promise<void> => {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
