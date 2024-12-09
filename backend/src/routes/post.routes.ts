@@ -16,8 +16,10 @@ router.post("/create", validateDto(CreatePostDto), controller.createPost as any)
 // Get posts with pagination and filters
 // router.get("/", controller.getPosts);
 router.get("/user/:id", controller.getPostsOfUser);
-// router.get("/:id", controller.getPostById as any);
 router.get("/trending", controller.getRankedPosts as any);
+router.post("/:id/like",controller.toggleLike as any);
+router.delete("/:id/like",controller.toggleLike as any);
+
 // router.patch(
 //   "/:id",
 //   validateDto(UpdatePostDto),
@@ -63,8 +65,6 @@ router.get("/trending", controller.getRankedPosts as any);
 
 // });
 
-// router.post("/:id/like", (req: AuthenticatedRequest, res) =>
-//   controller.toggleLike(req, res)
-// );
+
 
 export default router;

@@ -15,13 +15,7 @@ const userService = new UserService();
 const tokenService = new TokenService();
 
 export class AuthController extends BaseController {
-  constructor() {
-    super();
-    // Bind methods to preserve context
-    this.register = this.register.bind(this);
-    this.login = this.login.bind(this);
-  }
-  async register(req: Request, res: Response): Promise<void> {
+  register = async (req: Request, res: Response): Promise<void> => {
     try {
       const dto = req.body as RegisterRequest;
       const existingUser = await User.findOne({
@@ -48,9 +42,9 @@ export class AuthController extends BaseController {
       console.error("Reg error:", error);
       this.error(res, "Internal Server error", 500);
     }
-  }
+  };
 
-  async login(req: Request, res: Response): Promise<void> {
+  login = async(req: Request, res: Response): Promise<void> => {
     try {
       const dto = req.body as LoginRequest;
       const user = await userService.verifyCredentials(dto.email, dto.password);
@@ -72,8 +66,6 @@ export class AuthController extends BaseController {
   }
   // async logout(req: Request, res: Response): Promise<void> {
   //   try {
-
-
 
   //   }} catch (error) {
   //     console.error("Logout error:", error);

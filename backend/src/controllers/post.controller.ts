@@ -65,10 +65,6 @@ export class PostController extends BaseController {
       const response = await PostService.toggleLike(postId, userId);
       this.success(res, response);
     } catch (error) {
-      if (error.message === "Post not found") {
-        this.error(res, "Post not found", 404);
-        return;
-      }
       console.error("Toggle like error:", error);
       this.error(res, "Failed to toggle like", 500);
     }
