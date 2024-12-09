@@ -1,10 +1,11 @@
 # Surge Social
 
-A full-stack instagram-like application
+A full-stack instagram lookalike application
 
 ## Project Progress
 
 ### Authentication & Security
+
 - [x] Register screen implementation
 - [x] Login screen implementation
 - [x] reCAPTCHA integration for login/registration
@@ -14,44 +15,92 @@ A full-stack instagram-like application
 - [x] Protected routes implementation
 
 ### Posts & Timeline
+
 - [x] Protected listing page for posts
-- [x] Post creation functionality
+- [x] Post creation with image upload
 - [x] Post viewing functionality
 - [x] Timeline implementation
 - [x] Time-based post indexing
-- [ ] Like functionality
-- [ ] Like-based post indexing
+- [x] Like functionality
+- [x] Ranking algorithm for posts (time + likes weighted)
+- [ ] Image upload with S3 integration
+
 
 ### Infrastructure & Deployment
+
 - [x] MongoDB database integration
-- [x] Docker configuration
+- [x] Docker configuration with multi-stage builds
 - [x] Multi-container setup with docker-compose
-- [x] Basic unit tests implementation
+- [x] Environment configuration management
+- [x] Production SSL/TLS with Nginx reverse proxy
+- [x] Domain configuration and DNS setup
+- [x] VPS deployment with Docker
+- [x] Automated SSL certificate renewal with Certbot
+- [x] Basic unit tests with Jest
 - [ ] CI/CD pipeline setup
-- [ ] Deployment configuration
+- [ ] Rate limiting implementation
+- [ ] Redis caching layer
+- [ ] Load balancing configuration
+- [ ] Monitoring and logging (ELK Stack)
+- [ ] Backup automation
+- [ ] API documentation with Swagger/OpenAPI
+
+### Features & Enhancements
+
+- [x] User authentication system
+- [x] JWT token management
+- [x] Protected routes and authorization
+- [x] Post creation and viewing
+- [x] Image upload for posts
+- [x] Like/unlike functionality
+- [x] User profiles (basic)
+- [x] Timeline with ranking algorithm
+- [x] Input validation and error handling
+- [ ] User avatars and profile customization
+- [ ] Comment functionality on posts
+- [ ] Post sharing capability
+- [ ] User following/followers
+- [ ] Anonymous login implementation
+
+### Production Environment
+
+- Domain: surgesocial.app
+- Hosting: Vultr VPS with Docker
+- Database: MongoDB
+- SSL: Let's Encrypt with auto-renewal
+- Proxy: Nginx reverse proxy
+- Container Orchestration: Docker Compose
 
 ## Development Setup
 
-### Local Development (macOS)
-1. Copy `backend/sample.env` to `.env` and configure your environment variables
+### Local Development
+1. Copy `.env.example` to `.env` and configure environment variables:
+```bash
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+```bash
 2. Start your local MongoDB instance
 3. Install dependencies and start services:
-```bash
+
 # Backend
 cd backend
-pnpm install
-pnpm run dev
+npm install
+npm run dev
 
 # Frontend (in another terminal)
 cd frontend
-pnpm install
-pnpm run dev
+npm install
+npm run dev
 ```
 
 ### Docker Development
 If you're using Docker (non-macOS), the same configuration works with Docker Compose:
 
-1. Copy `backend/sample.env` to `.env` and configure your environment variables
+1. Copy `.env.example` to `.env` and configure environment variables:
+```bash
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+```
 2. Start the services:
 ```bash
 docker-compose up
@@ -62,6 +111,42 @@ The Docker setup includes:
 - Network isolation between services
 - Port mapping for local access
 - Environment variable support from .env file
+
+## Deployment
+
+### Prerequisites
+- Docker and Docker Compose installed
+- Domain DNS configured to point to VPS
+- SSH access to VPS
+- SSL certificates (automated via Certbot)
+
+### Automated Deployment
+
+1. SSH into VPS:
+```bash
+ssh user@surgesocial.app
+```
+2. Clone repository:
+```bash
+git clone https://github.com/minzique/surge-social.git
+cd surge-social
+```
+3. Configure environment and update `.env` with required values:
+```bash
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+```
+4. Run deployment script:
+```bash
+chmod +x scripts/deploy.sh
+./scripts/deploy.sh
+```
+The script handles:
+- SSL certificate generation
+- Docker image builds
+- Service orchestration
+- Nginx configuration
+
 
 ## Technical Architecture
 
@@ -111,6 +196,5 @@ surge-social/
 │   │   ├── hooks/         # Custom hooks
 │   │   ├── lib/           # Utilities
 │   │   └── types/         # TypeScript types
-├── shared/                 # Shared types and utilities
 ├── docker/                # Docker configuration
 └── scripts/               # Development scripts
