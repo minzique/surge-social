@@ -1,6 +1,15 @@
-# Surge Social
+<div align="center">
+  <img src="frontend/src/public/favicon.ico" alt="Surge Social" width="200"/>
+  <h1 >Surge Social</h1>
+  <p>A full-stack social media application built with TypeScript, React, and Node.js</p>
+</div>
 
-A full-stack instagram lookalike application
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
+
 
 ## Project Progress
 
